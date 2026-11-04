@@ -1,0 +1,47 @@
+{
+  "phase": "NUMPYRO2384_NEVER_LAUNCHED_MANUAL_REPAIR_DEPENDENCY_CLOSURE",
+  "image": "python@sha256:6b8555b2ad1d98bac702ce5bf226c41566408d87efde45b19cbdef9f36fcc998",
+  "groups": [
+    "dev",
+    "test",
+    "docs",
+    "examples",
+    "ci"
+  ],
+  "funsor_pin": "d9ceb0d3c6add16950138f781f2e5a7ee3df521f",
+  "cache_artifact_cap": 1073741824,
+  "inputs": {
+    ".validation/numpyro2384/bootstrap.txt": "265ab45dd3d165124a49952e54b1082522fc2b0cf79247104971a0a94fa3fe23",
+    ".validation/numpyro2384/constraints.txt": "5cbd67a3118db8991ade1c5be02901722cfce1d0897e740f856a818bc7c024af",
+    ".validation/numpyro2384/host.py": "35f696577968372b50d3e189aad49c8bc8aa515892022099debf2d080eaa8bf5",
+    ".validation/numpyro2384/inside.py": "2fe5995a76b2b2d324f7779d02c95e216b9a8933322cfa7d06b52afbc4ab5652",
+    ".validation/numpyro2384/pyproject.toml": "f797f44b384b2898c738b168d08b35826c139daa02147e4f97b25c30987bd17c",
+    ".github/workflows/validate-initialization-feedback.yml": "3a2ae592fd6bae1c70930560ab337eea5864d684a0d838e7fff35215221e6264"
+  },
+  "bounds": {
+    "hosted_arm64": true,
+    "container_memory_bytes": 2147483648,
+    "cpu": 2,
+    "pids": 256,
+    "work_bytes": 6442450944,
+    "absolute_controller_seconds": 1200,
+    "workflow_minutes": 30,
+    "network_sampled_container_bytes": 2147483648,
+    "image_pull_timeout_seconds": 180
+  },
+  "system_binary_gap": "pandoc/dot/fonts not assumed present; recordonly; must resolve before scientific/docs validation.",
+  "project_tests_builds_authorized": false,
+  "retry": false,
+  "unconstrained_fallback": false,
+  "external_disk": "Mac untouched; no image/container/cache/source deletion anywhere; isolatedpublicGitHubVM only.",
+  "source_commits": {
+    "published": "c4ee4145c253f0315359bd29d3114e2763a29227",
+    "master": "90343b491610b94eb74e1ab79c1457c6db83c2be"
+  },
+  "network": "Expected destinations PyPI/files.pythonhosted.org, public GitHub NumPyro and Funsor plus GitHub workflow/artifact infrastructure; destination allowlist NOT firewall-enforced. Traffic cap sampled, image pull separately bounded by time/size.",
+  "deadline_detail": "1200 seconds from host start, sampled between bounded subprocess calls; up to 40 seconds sampling overshoot plus terminal stop/state collection. Workflow hard timeout30 minutes.",
+  "publication_checks": [
+    "Fresh viewerleninworld; public ownfork; branchabsent; Actionsenabled read-onlyAPI; publicexistingPRcommitidentity; exactlyonepushrunheadsha/branch/event; no ref/configchange ifpreflightfails."
+  ],
+  "image_provenance": "RetainedBARTstatic-evidence officialPython DockerHub platformmanifest; exact record appended to review; in-run identity gates required."
+}
