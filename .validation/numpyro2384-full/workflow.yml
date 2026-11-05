@@ -1,0 +1,54 @@
+name: Full initialization feedback validation
+on:
+  push:
+    branches: [validate-initialization-format-verification]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  d0:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    outputs:
+      origin: ${{ steps.origin.outputs.origin }}
+      attempt_start: ${{ steps.origin.outputs.attempt_start }}
+    env:
+      JOB_LABEL: format-verification
+    steps:
+      - name: Record one whole-workflow origin
+        id: origin
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          gh --version
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" --jq .run_started_at > "$RUNNER_TEMP/run-origin.txt"
+          python3 - <<'PYORIGIN' >> "$GITHUB_OUTPUT"
+          import datetime,os,pathlib
+          text=(pathlib.Path(os.environ['RUNNER_TEMP'])/'run-origin.txt').read_text().strip()
+          print('origin=1793871033')
+          print('attempt_start='+str(int(datetime.datetime.fromisoformat(text.replace('Z','+00:00')).timestamp())))
+          PYORIGIN
+      - name: Fetch exact public diagnostic packet
+        run: |
+          set -eu
+          mkdir "$RUNNER_TEMP/numpyro2384-packet"
+          git -C "$RUNNER_TEMP/numpyro2384-packet" init --quiet
+          timeout 60 git -C "$RUNNER_TEMP/numpyro2384-packet" fetch --depth=1 "https://github.com/$GITHUB_REPOSITORY.git" "$GITHUB_SHA"
+          git -C "$RUNNER_TEMP/numpyro2384-packet" checkout --detach --quiet FETCH_HEAD
+          cd "$RUNNER_TEMP/numpyro2384-packet"
+          sha256sum --check .validation/numpyro2384-full/SHA256SUMS
+          cmp .github/workflows/validate-initialization-full-science.yml .validation/numpyro2384-full/workflow.yml
+      - name: Whole-scope prerequisite and admission
+        env:
+          PACKET_ORIGIN: ${{ steps.origin.outputs.origin }}
+          PACKET_ATTEMPT_START: ${{ steps.origin.outputs.attempt_start }}
+        run: python3 "$RUNNER_TEMP/numpyro2384-packet/.validation/numpyro2384-full/host.py" format-verification
+      - name: Retain all prerequisite evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: numpyro2384-format-verification
+          path: ${{ runner.temp }}/numpyro2384-full-format-verification/evidence
+          if-no-files-found: error
+          retention-days: 14

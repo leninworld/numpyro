@@ -1,0 +1,134 @@
+{
+  "published": "c4ee4145c253f0315359bd29d3114e2763a29227",
+  "upstream": "ec8c79960cb91e6dbd80beb422d55167b46d8b15",
+  "image": "python@sha256:6b8555b2ad1d98bac702ce5bf226c41566408d87efde45b19cbdef9f36fcc998",
+  "image_config": "sha256:9c4998120c916e3438dd11651703063becb98ad417225babd24ab6663e9358b2",
+  "python": "3.12.16",
+  "arch": "aarch64",
+  "source_url": "https://github.com/pyro-ppl/numpyro.git",
+  "util_sha256": "68a593b0ae161c200f0503f7cc1afb79eaed160ed3eb3bfa25225f0c502f86d7",
+  "closed_run": 41903035124,
+  "closed_run_note": "sync/check/freeze previously attempted in41903035124 (FAILED,controller fault,cause unknown,preserved). This packet proposes re-attempt under fresh authorization as StageC prerequisite. Resolver not repeated.",
+  "deadline_seconds": 3600,
+  "memory_gib": 13,
+  "cpus": 3,
+  "host_min_available_gib": 13,
+  "host_min_disk_gib": 10,
+  "disk_free_floor_gib": 3,
+  "parallel_speedup": 1.3,
+  "calibration_peak_max_gib": 8,
+  "quality_reserve_seconds": 900,
+  "artifact_reserve_seconds": 180,
+  "per_job_network_estimate_gib": 4,
+  "job_count": 1,
+  "aggregate_network_estimate_gib": 4,
+  "network_status": "conservative estimate, not measured transfer; no fallback acquisitions",
+  "billing": {
+    "repository": "leninworld/numpyro",
+    "visibility": "public",
+    "verified": true,
+    "runner": "ubuntu-24.04-arm",
+    "billing_basis": "standard public GitHub-hosted ARM runners free; https://docs.github.com/en/actions/reference/runners/github-hosted-runners",
+    "aggregate_jobs": "final exact number must come from executable matrix; not 4GiB aggregate"
+  },
+  "coverage_omitted": "PYTEST_ADDOPTS explicitly empty. Coverage and Coveralls omitted: no threshold/pass-fail gate upstream. Report omission; scientific selections unchanged.",
+  "xdist_failure_policy": "Each primary failure stands. One predeclared serial diagnostic of exactly each failing node in same job only if time remains; both saved. A serial pass labels order-dependent under xdist, never converts failure to pass. No retry of whole command.",
+  "baselines": {
+    "passed": 14,
+    "failed": 5
+  },
+  "repair_names": [
+    "test_autoguide_per_site_init_strategy",
+    "test_per_site_init_strategy",
+    "test_find_valid_initial_params_bare_init_to_value",
+    "test_init_strategy_optional_site_factory",
+    "test_init_strategy_zero_argument_factory",
+    "test_init_strategy_factory_must_return_callable",
+    "test_init_strategy_body_type_error"
+  ],
+  "calibration": [
+    {
+      "node": "test/test_distributions.py::test_mean_var[GaussianCopulaBeta-None-params57]",
+      "reference_seconds": 32.86
+    },
+    {
+      "node": "test/infer/test_autoguide.py::test_autosemidais",
+      "reference_seconds": 405.9
+    }
+  ],
+  "baseline_util_sha256": "98c2ce2c5d015d8acc6099298dfa7079f0ede73d9428463b2e96adffb9a365ae",
+  "apt_hosts": [
+    "deb.debian.org",
+    "security.debian.org"
+  ],
+  "hook_hosts": [
+    "github.com",
+    "objects.githubusercontent.com",
+    "release-assets.githubusercontent.com",
+    "pypi.org",
+    "files.pythonhosted.org",
+    "proxy.golang.org",
+    "sum.golang.org",
+    "dl.google.com",
+    "go.dev"
+  ],
+  "hook_revisions": {
+    "https://github.com/astral-sh/ty-pre-commit": "v0.0.75",
+    "https://github.com/pre-commit/pre-commit-hooks": "v6.0.0",
+    "https://github.com/codespell-project/codespell": "v2.4.2",
+    "https://github.com/google/yamlfmt": "v0.21.0",
+    "https://github.com/tombi-toml/tombi-pre-commit": "v0.11.5"
+  },
+  "source_blobs": {
+    "numpyro/infer/util.py": "b080fe6ab0240a64ddf2b73f0f2c721601ea521a",
+    "test/infer/test_autoguide.py": "0fab29bf0348363112ad7266587691b3575bf8b5",
+    "test/infer/test_infer_util.py": "6d80913cfd79323ba4e67563f05e8bd50a030db6"
+  },
+  "serial_diagnostic_max": 5,
+  "host_min_total_gib": 14,
+  "baseline_failure_ids": [
+    "test/infer/test_infer_util.py::test_init_strategy_zero_argument_factory[False-initialize_model]",
+    "test/infer/test_infer_util.py::test_init_strategy_zero_argument_factory[True-find_valid_initial_params]",
+    "test/infer/test_infer_util.py::test_init_strategy_zero_argument_factory[True-initialize_model]",
+    "test/infer/test_infer_util.py::test_init_strategy_factory_must_return_callable[find_valid_initial_params]",
+    "test/infer/test_infer_util.py::test_init_strategy_factory_must_return_callable[initialize_model]"
+  ],
+  "backend_metadata_hashes": {
+    "setuptools": "062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922",
+    "wheel": "708e7481cc80179af0e556bbf0cc00b8444c7321e2700b8d8580231d13017248"
+  },
+  "build_backend_contract": {
+    "funsor": "Exact d9ceb0d3 pyproject read via official GitHub: setuptools>=77; pinned80.9.0 satisfies. Isolated source backend versions pinned by build-constraints; verbose logs retained, no claim VCS --require-hashes enforcement.",
+    "numpyro": "Actual c4 pyproject requires setuptools>=61 and wheel; overlay80.9.0/0.45.1 satisfies, editable/build --no-build-isolation."
+  },
+  "capacity_basis": "Old41903035124 completed pre-admission verifies MemTotal>=12GiB, MemAvailable>=6GiB/freeDisk>=10GiB but exact values were not saved. New memory floors13available/14total are declared prerequisites, not measured historic capacity. Disk10GiB uses verified lower bound, livefloor3GiB. FullsuitepeakUNKNOWN/hard13GiB; no settingschanges/cleanup.",
+  "families": {
+    "model": [
+      "model-distribution-1",
+      "model-distribution-2",
+      "model-distribution-3",
+      "model-distribution-4",
+      "model-distribution-5",
+      "model-other"
+    ],
+    "inference": [
+      "inference-auto-heavy",
+      "inference-auto-other",
+      "inference-other-rest"
+    ]
+  },
+  "logical_attempt": 3,
+  "original_origin": 1793871033,
+  "original_absolute_deadline": 1793874633,
+  "closed_initial_run": 42002938726,
+  "maximum_logical_attempts": 3,
+  "cumulative_network_estimate_gib": 72.35,
+  "cumulative_accounting": "Original initialrun compressed base layer downloads about0.346GiB; noAPT/pip/fixtures/tests. Correctedfullforecast72GiB plusoldtransferretained, notreset. Networkfiguresestimatesnotcapturedpacketcounts.",
+  "one_corrected_attempt_requires_fresh_approval": true,
+  "stage": "PROPOSED_ADDITIONAL_SOURCE_FORMAT_AND_INSTALLED_SMOKE_VERIFICATION",
+  "requires_explicit_new_authority": true,
+  "prior_full_run": 42003958097,
+  "cumulative_prior_network_accounting_preserved": true,
+  "scientific_reuse_basis": "Alloriginalsciencegroupsmustfinishfirst. OnlyR1->R2testdecoratorformat changed; productutil/testautoguide bytesidentical,testinferutilASTidentical directlyverified. No fullscience rerun proposed.",
+  "no_retry_of_this_check": true
+}

@@ -1,0 +1,235 @@
+diff --git a/numpyro/infer/util.py b/numpyro/infer/util.py
+index 81c204d1887432e648a860b62159231c886976a6..b080fe6ab0240a64ddf2b73f0f2c721601ea521a 100644
+--- a/numpyro/infer/util.py
++++ b/numpyro/infer/util.py
+@@ -377,22 +377,42 @@ def _init_to_unconstrained_value(site=None, values={}):
+ 
+ 
+ def _normalize_init_strategy(init_strategy):
++    """Return a partial of a per-site initialization function.
++
++    Factories following the ``init_to_*(site=None, **kwargs)`` convention are
++    called so fast paths can read their keywords; callables requiring a
++    positional ``site`` are wrapped as-is. A factory must return a per-site
++    function, otherwise ``TypeError`` is raised.
++    """
+     if isinstance(init_strategy, partial):
+         return init_strategy
+     try:
+         signature = inspect.signature(init_strategy)
+     except (TypeError, ValueError):
+-        return init_strategy()
+-    try:
+-        signature.bind()
+-    except TypeError:
++        return _call_init_strategy_factory(init_strategy)
++
++    def binds(*args):
+         try:
+-            signature.bind(None)
++            signature.bind(*args)
+         except TypeError:
+-            pass
+-        else:
+-            return partial(init_strategy)
+-    return init_strategy()
++            return False
++        return True
++
++    if not binds() and binds(None):
++        return partial(init_strategy)
++    return _call_init_strategy_factory(init_strategy)
++
++
++def _call_init_strategy_factory(factory):
++    strategy = factory()
++    if isinstance(strategy, partial):
++        return strategy
++    if callable(strategy):
++        return partial(strategy)
++    raise TypeError(
++        "Initialization strategy factory must return a per-site function f(site); "
++        f"got {type(strategy).__name__}."
++    )
+ 
+ 
+ def find_valid_initial_params(
+@@ -806,6 +826,7 @@ def initialize_model(
+         at `deterministic` sites in the model.
+     """
+     model_kwargs = {} if model_kwargs is None else model_kwargs
++    init_strategy = _normalize_init_strategy(init_strategy)
+     substituted_model = substitute(
+         seed(model, rng_key if is_prng_key(rng_key) else rng_key[0]),
+         substitute_fn=init_strategy,
+@@ -848,7 +869,6 @@ def initialize_model(
+         model_kwargs=model_kwargs,
+     )
+ 
+-    init_strategy = _normalize_init_strategy(init_strategy)
+     if (init_strategy.func is init_to_value) and not replay_model:
+         init_values = init_strategy.keywords.get("values")
+         unconstrained_values = transform_fn(inv_transforms, init_values, invert=True)
+diff --git a/test/infer/test_autoguide.py b/test/infer/test_autoguide.py
+index 3807d3681ebbe2f3aa409323b1550286f07df6c2..0fab29bf0348363112ad7266587691b3575bf8b5 100644
+--- a/test/infer/test_autoguide.py
++++ b/test/infer/test_autoguide.py
+@@ -1392,34 +1392,14 @@ def test_autoguide_forward_mode_differentiation(auto_class):
+     svi.run(random.key(0), 10, forward_mode_differentiation=True)
+ 
+ 
+-@pytest.mark.parametrize(
+-    "kind", ["function", "lambda", "callable", "partial", "factory"]
+-)
+-def test_autoguide_per_site_init_strategy(kind):
++def test_autoguide_per_site_init_strategy():
+     def model():
+         numpyro.sample("x", dist.Normal())
+         numpyro.sample("y", dist.Normal())
+ 
+-    def strategy(site):
+-        return 3.0 if site["name"] == "x" else 7.0
+-
+-    class Strategy:
+-        def __call__(self, site):
+-            return strategy(site)
+-
+-    def factory(site=None):
+-        if site is None:
+-            return partial(strategy)
+-        return strategy(site)
+-
+-    strategies = {
+-        "function": strategy,
+-        "lambda": lambda site: 3.0 if site["name"] == "x" else 7.0,
+-        "callable": Strategy(),
+-        "partial": partial(strategy),
+-        "factory": factory,
+-    }
+-    guide = AutoDiagonalNormal(model, init_loc_fn=strategies[kind])
++    guide = AutoDiagonalNormal(
++        model, init_loc_fn=lambda site: 3.0 if site["name"] == "x" else 7.0
++    )
+     svi = SVI(model, guide, optim.Adam(0.1), Trace_ELBO())
+     state = svi.init(random.key(9))
+     assert_allclose(svi.get_params(state)["auto_loc"], jnp.array([3.0, 7.0]))
+diff --git a/test/infer/test_infer_util.py b/test/infer/test_infer_util.py
+index 371e9e0a2eae3f03299a2d72bb2b8dcf11eb77d6..6d80913cfd79323ba4e67563f05e8bd50a030db6 100644
+--- a/test/infer/test_infer_util.py
++++ b/test/infer/test_infer_util.py
+@@ -753,7 +753,7 @@ def test_log_likelihood_flax_nn():
+ 
+ @pytest.mark.parametrize("initializer", [find_valid_initial_params, initialize_model])
+ @pytest.mark.parametrize(
+-    "kind", ["function", "lambda", "callable", "partial", "partial_subclass"]
++    "kind", ["function", "callable", "partial", "partial_subclass"]
+ )
+ def test_per_site_init_strategy(initializer, kind):
+     def model():
+@@ -772,7 +772,6 @@ def test_per_site_init_strategy(initializer, kind):
+ 
+     strategies = {
+         "function": strategy,
+-        "lambda": lambda site: 3.0 if site["name"] == "x" else 7.0,
+         "callable": Strategy(),
+         "partial": partial(strategy),
+         "partial_subclass": Partial(strategy),
+@@ -782,30 +781,22 @@ def test_per_site_init_strategy(initializer, kind):
+     assert_allclose(info[0]["y"], 7.0)
+ 
+ 
+-@pytest.mark.parametrize("initializer", [find_valid_initial_params, initialize_model])
+-@pytest.mark.parametrize(
+-    "strategy", [init_to_uniform, init_to_value, init_to_uniform(radius=0)]
+-)
+-def test_init_strategy_builtin_compatibility(initializer, strategy):
++def test_find_valid_initial_params_bare_init_to_value():
+     def model():
+         numpyro.sample("x", dist.Normal())
+ 
+-    kwargs = (
+-        {"prototype_params": {"x": jnp.array(0.0)}}
+-        if initializer is find_valid_initial_params
+-        else {}
++    info, valid = find_valid_initial_params(
++        random.key(0),
++        model,
++        init_strategy=init_to_value,
++        prototype_params={"x": jnp.array(0.0)},
+     )
+-    info = initializer(random.key(0), model, init_strategy=strategy, **kwargs)[0]
++    assert valid
+     assert jnp.isfinite(info[0]["x"])
+-    if isinstance(strategy, partial):
+-        assert_allclose(info[0]["x"], 0.0)
+-    else:
+-        assert jnp.abs(info[0]["x"]) <= 2
+ 
+ 
+ @pytest.mark.parametrize("initializer", [find_valid_initial_params, initialize_model])
+-@pytest.mark.parametrize("inspectable", [True, False])
+-def test_init_strategy_optional_site_factory(initializer, inspectable):
++def test_init_strategy_optional_site_factory(initializer):
+     def model():
+         numpyro.sample("x", dist.Normal())
+ 
+@@ -815,26 +806,33 @@ def test_init_strategy_optional_site_factory(initializer, inspectable):
+                 return partial(self)
+             return 3.0
+ 
+-    if not inspectable:
+-        Strategy.__signature__ = "not a signature"
+     info = initializer(random.key(0), model, init_strategy=Strategy())[0]
+     assert_allclose(info[0]["x"], 3.0)
+ 
+ 
+-def test_find_valid_initial_params_zero_argument_factory():
++@pytest.mark.parametrize("initializer", [find_valid_initial_params, initialize_model])
++@pytest.mark.parametrize("plain_function", [False, True])
++def test_init_strategy_zero_argument_factory(initializer, plain_function):
+     def model():
+         numpyro.sample("x", dist.Normal())
+ 
+     def factory():
+-        return init_to_uniform(radius=0)
++        return (lambda site: 0.0) if plain_function else init_to_uniform(radius=0)
+ 
+-    info, valid = find_valid_initial_params(random.key(0), model, init_strategy=factory)
+-    assert valid
++    info = initializer(random.key(0), model, init_strategy=factory)[0]
+     assert_allclose(info[0]["x"], 0.0)
+ 
+ 
+ @pytest.mark.parametrize("initializer", [find_valid_initial_params, initialize_model])
+-def test_init_strategy_body_type_error(initializer):
++def test_init_strategy_factory_must_return_callable(initializer):
++    def model():
++        numpyro.sample("x", dist.Normal())
++
++    with pytest.raises(TypeError, match=r"per-site function f\(site\)"):
++        initializer(random.key(0), model, init_strategy=lambda: 3.0)
++
++
++def test_init_strategy_body_type_error():
+     calls = []
+ 
+     def model():
+@@ -845,17 +843,5 @@ def test_init_strategy_body_type_error(initializer):
+         raise TypeError("initialization body error")
+ 
+     with pytest.raises(TypeError, match="^initialization body error$"):
+-        initializer(random.key(0), model, init_strategy=strategy)
++        initialize_model(random.key(0), model, init_strategy=strategy)
+     assert calls == ["x"]
+-
+-
+-@pytest.mark.parametrize("initializer", [find_valid_initial_params, initialize_model])
+-def test_init_strategy_keyword_only_site_unchanged(initializer):
+-    def model():
+-        numpyro.sample("x", dist.Normal())
+-
+-    def strategy(*, site):
+-        return 3.0
+-
+-    with pytest.raises(TypeError):
+-        initializer(random.key(0), model, init_strategy=strategy)

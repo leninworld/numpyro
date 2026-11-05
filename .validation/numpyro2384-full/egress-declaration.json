@@ -1,0 +1,68 @@
+{
+  "status": "DECLARED, NOT NETWORK-ENFORCED; no new proxy or host setup",
+  "phases": {
+    "image": [
+      "auth.docker.io",
+      "registry-1.docker.io",
+      "production.cloudflare.docker.com"
+    ],
+    "system": [
+      "deb.debian.org",
+      "security.debian.org"
+    ],
+    "python": [
+      "pypi.org",
+      "files.pythonhosted.org"
+    ],
+    "source_and_hooks": [
+      "github.com",
+      "objects.githubusercontent.com",
+      "release-assets.githubusercontent.com",
+      "raw.githubusercontent.com",
+      "codeload.github.com"
+    ],
+    "hook_go_toolchain": [
+      "proxy.golang.org",
+      "sum.golang.org",
+      "dl.google.com",
+      "go.dev"
+    ],
+    "datasets": [
+      "github.com",
+      "raw.githubusercontent.com",
+      "media.githubusercontent.com",
+      "archive.ics.uci.edu"
+    ],
+    "docs_intersphinx": [
+      "docs.python.org",
+      "numpy.org",
+      "docs.jax.dev",
+      "docs.pyro.ai"
+    ]
+  },
+  "static_source_host_inventory": {
+    "numpyro/examples/datasets.py": [
+      "archive.ics.uci.edu",
+      "github.com",
+      "raw.githubusercontent.com"
+    ],
+    "docs/source/conf.py": [
+      "colab.research.google.com",
+      "docs.jax.dev",
+      "docs.pyro.ai",
+      "docs.python.org",
+      "github.com",
+      "numpy.org",
+      "stackoverflow.com",
+      "www.sphinx-doc.org"
+    ]
+  },
+  "disclosures": [
+    "all-groups scientific environment is a superset of upstreamCI",
+    "alljobsimageincludespandocgraphvizfonts/git/make",
+    "setuptools/wheel/prek installed in scientificenv",
+    "xdist3.8+pytest9.1.1 compatibility firstprovenbyrealfixture,currentlyUNRUN",
+    "upstreamtagreferences mappedtoactualhookcacheSHAs afterprek",
+    "variant per-command costs unknown: conservative entire CI step upper bound used, not fabricated timings"
+  ]
+}
