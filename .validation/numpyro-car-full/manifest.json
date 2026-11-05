@@ -1,0 +1,135 @@
+{
+  "image": "python@sha256:6b8555b2ad1d98bac702ce5bf226c41566408d87efde45b19cbdef9f36fcc998",
+  "image_config": "sha256:9c4998120c916e3438dd11651703063becb98ad417225babd24ab6663e9358b2",
+  "python": "3.12.16",
+  "arch": "aarch64",
+  "source_url": "https://github.com/pyro-ppl/numpyro.git",
+  "apt_hosts": [
+    "deb.debian.org",
+    "security.debian.org"
+  ],
+  "hook_hosts": [
+    "github.com",
+    "objects.githubusercontent.com",
+    "release-assets.githubusercontent.com",
+    "pypi.org",
+    "files.pythonhosted.org",
+    "proxy.golang.org",
+    "sum.golang.org",
+    "dl.google.com",
+    "go.dev"
+  ],
+  "hook_revisions": {
+    "https://github.com/astral-sh/ty-pre-commit": "v0.0.75",
+    "https://github.com/pre-commit/pre-commit-hooks": "v6.0.0",
+    "https://github.com/codespell-project/codespell": "v2.4.2",
+    "https://github.com/google/yamlfmt": "v0.21.0",
+    "https://github.com/tombi-toml/tombi-pre-commit": "v0.11.5"
+  },
+  "backend_metadata_hashes": {
+    "setuptools": "062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922",
+    "wheel": "708e7481cc80179af0e556bbf0cc00b8444c7321e2700b8d8580231d13017248"
+  },
+  "build_backend_contract": {
+    "funsor": "Exact d9ceb0d3 pyproject read via official GitHub: setuptools>=77; pinned80.9.0 satisfies. Isolated source backend versions pinned by build-constraints; verbose logs retained, no claim VCS --require-hashes enforcement.",
+    "numpyro": "Actual c4 pyproject requires setuptools>=61 and wheel; overlay80.9.0/0.45.1 satisfies, editable/build --no-build-isolation."
+  },
+  "serial_diagnostic_max": 5,
+  "billing": {
+    "repository": "leninworld/numpyro",
+    "visibility": "public",
+    "verified": true,
+    "runner": "ubuntu-24.04-arm",
+    "billing_basis": "standard public GitHub-hosted ARM runners free; https://docs.github.com/en/actions/reference/runners/github-hosted-runners",
+    "aggregate_jobs": "final exact number must come from executable matrix; not 4GiB aggregate"
+  },
+  "xdist_failure_policy": "Each primary failure stands. One predeclared serial diagnostic of exactly each failing node in same job only if time remains; both saved. A serial pass labels order-dependent under xdist, never converts failure to pass. No retry of whole command.",
+  "families": {
+    "model": [
+      "model-distribution-1",
+      "model-distribution-2",
+      "model-distribution-3",
+      "model-distribution-4",
+      "model-distribution-5",
+      "model-other"
+    ],
+    "inference": [
+      "inference-auto-heavy",
+      "inference-auto-other",
+      "inference-other-rest"
+    ]
+  },
+  "base": "ec8c79960cb91e6dbd80beb422d55167b46d8b15",
+  "baseline_sha256": {
+    "numpyro/distributions/continuous.py": "5fbd431c3d6229db4eb302ac0cb7c442f1def855c70bab0beb971ae1b871d369",
+    "test/test_distributions.py": "9341e79c7bf2758c01648594fde0c42cdd8e7f74a6398986eac305bcabaad8c1"
+  },
+  "baseline_blobs": {
+    "numpyro/distributions/continuous.py": "801b33b0639527ef48d4844c1019dc5cff164b55",
+    "test/test_distributions.py": "348777c3fcd060ada153b3ea373fc0fc175f3505"
+  },
+  "candidate_sha256": {
+    "numpyro/distributions/continuous.py": "c0aa220e509b0879af1d6489be85f98c8f9943d88baac43df90c660308e07c98",
+    "test/test_distributions.py": "13d1eb7ba4142485c7b9a38ce7568aa1a64bf7ac81fe25dee2406eceeafa8658",
+    "test/test_car_moments.py": "77eaebc76ef8380140d6ffb4696bfdff2c665853c9015c11849d3ddff0edd8e1"
+  },
+  "candidate_blobs": {
+    "numpyro/distributions/continuous.py": "4bf9533f225933a1928fa1459c7859cddc0d7d90",
+    "test/test_distributions.py": "0e80d472c3dd32125c0a44b9bae4a6ff25d331e8",
+    "test/test_car_moments.py": "5e1bbc35d02342ed07bc3f250ad9d990490e61d2"
+  },
+  "feature_patch_sha256": "2e942d129bb92b3a245acdd5838984e0eba4062a1b00ec2367400e27163e0f68",
+  "deadline_seconds": 3600,
+  "target_seconds": 3000,
+  "memory_gib": 13,
+  "cpus": 3,
+  "host_min_available_gib": 13,
+  "host_min_total_gib": 14,
+  "host_min_disk_gib": 10,
+  "disk_free_floor_gib": 3,
+  "D0_minimum_total_remaining_seconds": 2400,
+  "D0_peak_limit_gib": 8,
+  "artifact_reserve_seconds": 180,
+  "queue_reserve_seconds": 300,
+  "quality_projection_seconds": 1200,
+  "car_extra_seconds": 120,
+  "observed_calibration_seconds": 36.217,
+  "observed_bundle_job_seconds": {
+    "examples": 1142.444552898407,
+    "inference-auto-heavy": 186.70297074317932,
+    "inference-auto-other": 267.6069664955139,
+    "inference-contrib": 625.911682844162,
+    "inference-other-rest": 578.2029187679291,
+    "mcmc": 323.6657109260559,
+    "model-distribution-1": 765.9590544700623,
+    "model-distribution-2": 497.7403471469879,
+    "model-distribution-3": 604.0253539085388,
+    "model-distribution-4": 650.7957699298859,
+    "model-distribution-5": 462.11215376853943,
+    "model-other": 465.04452562332153,
+    "variants-chains-a": 199.28626346588135,
+    "variants-chains-b": 138.93922901153564,
+    "variants-custom-nested": 547.2457084655762,
+    "variants-x64-tracer": 289.5455641746521
+  },
+  "baseline_exception_by_function": {
+    "test_car_moments_match_precision_inverse": "AttributeError",
+    "test_car_zero_correlation_variance": "NotImplementedError",
+    "test_car_moments_broadcast_loc_and_correlation": "NotImplementedError",
+    "test_car_jitted_moments_do_not_cache_tracers": "NotImplementedError",
+    "test_car_variance_gradients": "NotImplementedError",
+    "test_car_covariance_cache_preserves_pytree": "AttributeError",
+    "test_car_expanded_variance": "NotImplementedError"
+  },
+  "closure_sha256": "11b2c6696ae740d79a0ecfc335710080f0b3f1e477294940915b80934ae5a0d3",
+  "funsor_snapshot": "d9ceb0d3c6add16950138f781f2e5a7ee3df521f",
+  "full_science_scope": "all23originalscientificcommands16bundles unchanged + fullquality; baselineaffectedCARcontrols anddedicatedfailbefore",
+  "scope_revision_requires_review": "Remove agent-added duplicate fullbaseline matrix; no user/upstream required candidate checks removed. No dispatch untilClaudeexplicitlyaccepts.",
+  "job_count": 18,
+  "matrix_max_parallel": 17,
+  "per_job_network_estimate_gib": 4,
+  "aggregate_network_estimate_gib": 72,
+  "network_status": "estimate notpacketmeasured; no fallback acquisition",
+  "execution_policy": "ONE logicalattempt maximum1; no repeatpush/rerun/neworigin orautomaticretry afterfailure",
+  "coverage_omitted": "PYTEST_ADDOPTSempty aspreviouslyaccepted; no Coveralls/coverage upload; scientificselectionsunchanged"
+}

@@ -1,0 +1,109 @@
+[
+  {
+    "label": "model-distribution-1",
+    "commands": [
+      "model-distribution-1"
+    ]
+  },
+  {
+    "label": "model-distribution-2",
+    "commands": [
+      "model-distribution-2"
+    ]
+  },
+  {
+    "label": "model-distribution-3",
+    "commands": [
+      "model-distribution-3"
+    ]
+  },
+  {
+    "label": "model-distribution-4",
+    "commands": [
+      "model-distribution-4"
+    ]
+  },
+  {
+    "label": "model-distribution-5",
+    "commands": [
+      "model-distribution-5"
+    ]
+  },
+  {
+    "label": "model-other",
+    "commands": [
+      "model-other"
+    ]
+  },
+  {
+    "label": "inference-contrib",
+    "commands": [
+      "inference-contrib"
+    ]
+  },
+  {
+    "label": "inference-auto-heavy",
+    "commands": [
+      "inference-auto-heavy"
+    ]
+  },
+  {
+    "label": "inference-auto-other",
+    "commands": [
+      "inference-auto-other"
+    ]
+  },
+  {
+    "label": "inference-other-rest",
+    "commands": [
+      "inference-other-rest"
+    ]
+  },
+  {
+    "label": "mcmc",
+    "commands": [
+      "mcmc"
+    ]
+  },
+  {
+    "label": "examples",
+    "commands": [
+      "examples"
+    ]
+  },
+  {
+    "label": "variants-x64-tracer",
+    "commands": [
+      "model-x64",
+      "tracer-mcmc",
+      "tracer-gompertz",
+      "mcmc-x64"
+    ]
+  },
+  {
+    "label": "variants-chains-a",
+    "commands": [
+      "chains-dcc",
+      "chains-tfp",
+      "chains-gibbs"
+    ]
+  },
+  {
+    "label": "variants-chains-b",
+    "commands": [
+      "chains-mcmc",
+      "chains-compile"
+    ]
+  },
+  {
+    "label": "variants-custom-nested",
+    "commands": [
+      "mcmc-custom-prng",
+      "nested-x64"
+    ]
+  },
+  {
+    "label": "quality",
+    "commands": []
+  }
+]

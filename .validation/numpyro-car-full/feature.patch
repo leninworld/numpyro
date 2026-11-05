@@ -1,0 +1,241 @@
+diff --git a/numpyro/distributions/continuous.py b/numpyro/distributions/continuous.py
+index 801b33b0639527ef48d4844c1019dc5cff164b55..4bf9533f225933a1928fa1459c7859cddc0d7d90 100644
+--- a/numpyro/distributions/continuous.py
++++ b/numpyro/distributions/continuous.py
+@@ -3502,9 +3502,11 @@ class CAR(Distribution):
+     is stored in SciPy CSR format and converted to JAX ``BCOO`` for the
+     quadratic form in ``log_prob``. The normalized adjacency is nevertheless
+     densified on the host for NumPy eigenvalue computation, and
+-    ``precision_matrix`` and sampling are dense. Thus, ``is_sparse=True`` does
+-    not provide fully sparse inference. This mode accepts only two-dimensional
+-    NumPy or SciPy sparse adjacency inputs.
++    ``precision_matrix``, sampling, ``variance`` and ``covariance_matrix`` are
++    dense. Computing the moments takes :math:`O(N^3)` time and :math:`O(N^2)`
++    memory even with ``is_sparse=True``; this mode does not provide fully sparse
++    inference. It accepts only two-dimensional NumPy or SciPy sparse adjacency
++    inputs.
+ 
+     :param float or ndarray loc: mean of the multivariate normal
+     :param float correlation: autoregression parameter. At zero, sites are
+@@ -3702,6 +3704,25 @@ class CAR(Distribution):
+     def mean(self) -> Array:
+         return jnp.broadcast_to(self.loc, self.shape())
+ 
++    @property
++    def variance(self) -> Array:
++        r"""Marginal variances, the diagonal of :math:`Q^{-1}`.
++
++        These differ from the conditional variances :math:`1/(\tau n_i)`
++        unless ``correlation`` is zero.
++        """
++        mvn = MultivariateNormal(self.mean, precision_matrix=self.precision_matrix)
++        return mvn.variance
++
++    @lazy_property
++    def covariance_matrix(self) -> Array:
++        r"""Dense marginal covariance :math:`Q^{-1}`, including all batch axes."""
++        mvn = MultivariateNormal(self.mean, precision_matrix=self.precision_matrix)
++        return jnp.broadcast_to(
++            mvn.covariance_matrix,
++            self.batch_shape + self.event_shape + self.event_shape,
++        )
++
+     @lazy_property
+     def precision_matrix(self):
+         if self.is_sparse:
+diff --git a/test/test_distributions.py b/test/test_distributions.py
+index 348777c3fcd060ada153b3ea373fc0fc175f3505..0e80d472c3dd32125c0a44b9bae4a6ff25d331e8 100644
+--- a/test/test_distributions.py
++++ b/test/test_distributions.py
+@@ -2823,7 +2823,7 @@ def test_mean_var(jax_dist, sp_dist, params):
+     # `batch_shape + event_shape` -- the same contract `test_dist_shape` enforces for
+     # samples. Checked uniformly here (not per scipy/family branch below) so every
+     # distribution is held to it. Distributions without a closed-form moment raise
+-    # `NotImplementedError` and are skipped (e.g. CAR/Gompertz have no `variance`).
++    # `NotImplementedError` and are skipped (e.g. Gompertz has no `variance`).
+     expected_moment_shape = d_jax.batch_shape + d_jax.event_shape
+     for moment in ("mean", "variance"):
+         try:
+@@ -2973,8 +2973,6 @@ def test_mean_var(jax_dist, sp_dist, params):
+             mean = None
+         if mean is not None and jnp.all(jnp.isfinite(mean)):
+             assert_allclose(jnp.mean(samples, 0), mean, rtol=0.05, atol=1e-2)
+-        if isinstance(d_jax, dist.CAR):
+-            pytest.skip("CAR distribution does not have `variance` implemented.")
+         if isinstance(d_jax, dist.Gompertz):
+             pytest.skip("Gompertz distribution does not have `variance` implemented.")
+         try:
+diff --git a/test/test_car_moments.py b/test/test_car_moments.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..5e1bbc35d02342ed07bc3f250ad9d990490e61d2
+--- /dev/null
++++ b/test/test_car_moments.py
+@@ -0,0 +1,168 @@
++# Copyright Contributors to the Pyro project.
++# SPDX-License-Identifier: Apache-2.0
++
++import numpy as np
++from numpy.testing import assert_allclose
++import pytest
++from scipy.sparse import csr_matrix
++
++import jax
++import jax.numpy as jnp
++
++from numpyro import distributions as dist
++
++
++# No JAX arrays at collection time: test/conftest.py checks jax.live_arrays().
++_ADJACENCY = np.array(
++    [
++        [0.0, 1.0, 2.0, 0.0],
++        [1.0, 0.0, 0.0, 3.0],
++        [2.0, 0.0, 0.0, 4.0],
++        [0.0, 3.0, 4.0, 0.0],
++    ],
++    dtype=np.float32,
++)
++# For |rho| <= 0.4, cond(Q) <= (7/3)*(1.4/0.6) < 6. The tolerances allow
++# float32 Cholesky/solve roundoff against the independent float64 NumPy oracle.
++# Also ||Sigma|| <= 1/(1.7*3*(1-0.4)) < 0.33 bounds the entrywise scale.
++# For the identity residual, 4*cond(Q)*eps32 < 2.6e-6; allow a margin below.
++_RTOL = 1e-5
++_ATOL = 2e-6
++_RESIDUAL_ATOL = 1e-5
++
++
++def _make_car(is_sparse, loc=0.0, correlation=0.4, conditional_precision=1.7):
++    dtype = jnp.result_type(float)
++    weights = _ADJACENCY.astype(dtype)
++    adjacency = csr_matrix(weights) if is_sparse else weights
++    return dist.CAR(
++        loc, correlation, conditional_precision, adjacency, is_sparse=is_sparse
++    )
++
++
++def _numpy_moments(correlation, conditional_precision):
++    adjacency = _ADJACENCY.astype(np.float64)
++    precision = conditional_precision * (
++        np.diag(adjacency.sum(-1)) - correlation * adjacency
++    )
++    assert np.linalg.cond(precision) < 6
++    return precision, np.linalg.inv(precision)
++
++
++@pytest.mark.parametrize("is_sparse", [False, True])
++@pytest.mark.parametrize("correlation", [-0.4, 0.0, 0.4])
++def test_car_moments_match_precision_inverse(is_sparse, correlation):
++    d = _make_car(is_sparse, correlation=correlation)
++    precision, covariance = _numpy_moments(correlation, 1.7)
++    actual_covariance = d.covariance_matrix
++    assert actual_covariance.shape == (4, 4)
++    assert_allclose(actual_covariance, covariance, rtol=_RTOL, atol=_ATOL)
++    assert_allclose(precision @ actual_covariance, np.eye(4), atol=_RESIDUAL_ATOL)
++    assert_allclose(d.variance, covariance.diagonal(), rtol=_RTOL, atol=_ATOL)
++
++
++@pytest.mark.parametrize("is_sparse", [False, True])
++def test_car_zero_correlation_variance(is_sparse):
++    d = _make_car(is_sparse, correlation=0.0)
++    variance = d.variance
++    assert isinstance(variance, jax.Array)
++    assert variance.shape == (4,)
++    assert variance.dtype == jnp.result_type(float)
++    assert np.isfinite(variance).all()
++    assert_allclose(variance, 1 / (1.7 * _ADJACENCY.sum(-1)), rtol=_RTOL, atol=_ATOL)
++
++
++@pytest.mark.parametrize("is_sparse", [False, True])
++def test_car_moments_broadcast_loc_and_correlation(is_sparse):
++    correlation = np.array([-0.3, 0.4])
++    d = _make_car(is_sparse, loc=np.zeros((3, 1, 4)), correlation=correlation)
++    variance = d.variance
++    assert isinstance(variance, jax.Array)
++    assert variance.shape == (3, 2, 4)
++    assert np.isfinite(variance).all()
++    covariance = np.stack([_numpy_moments(rho, 1.7)[1] for rho in correlation])
++    expected = np.broadcast_to(covariance, (3, 2, 4, 4))
++    assert d.covariance_matrix.shape == expected.shape
++    assert_allclose(d.covariance_matrix, expected, rtol=_RTOL, atol=_ATOL)
++    assert_allclose(
++        variance, expected.diagonal(axis1=-2, axis2=-1), rtol=_RTOL, atol=_ATOL
++    )
++
++
++@pytest.mark.parametrize("is_sparse", [False, True])
++def test_car_jitted_moments_do_not_cache_tracers(is_sparse):
++    d = _make_car(is_sparse)
++    # Close over sparse adjacency; do not make a SciPy CSR a jit argument.
++    with jax.checking_leaks():
++        variance, covariance = jax.jit(lambda: (d.variance, d.covariance_matrix))()
++    assert "covariance_matrix" not in d.__dict__
++    assert isinstance(variance, jax.Array)
++    assert isinstance(covariance, jax.Array)
++    assert_allclose(variance, d.variance, rtol=_RTOL, atol=_ATOL)
++    assert_allclose(covariance, d.covariance_matrix, rtol=_RTOL, atol=_ATOL)
++
++
++@pytest.mark.parametrize("is_sparse", [False, True])
++@pytest.mark.parametrize("correlation", [-0.4, 0.4])
++def test_car_variance_gradients(is_sparse, correlation):
++    def total_variance(rho, tau):
++        return jnp.sum(
++            _make_car(is_sparse, correlation=rho, conditional_precision=tau).variance
++        )
++
++    _, covariance = _numpy_moments(correlation, 1.7)
++    expected = (
++        1.7 * np.trace(covariance @ _ADJACENCY @ covariance),
++        -np.trace(covariance) / 1.7,
++    )
++    derivative = jax.grad(total_variance, argnums=(0, 1))
++    for actual in [derivative(correlation, 1.7), jax.jit(derivative)(correlation, 1.7)]:
++        # The oracle multiplies two covariance matrices; allow extra roundoff.
++        assert_allclose(actual, expected, rtol=5e-5, atol=_ATOL)
++
++
++@pytest.mark.parametrize("is_sparse", [False, True])
++def test_car_covariance_cache_preserves_pytree(is_sparse):
++    d = _make_car(is_sparse)
++    cold_fields = (d.gather_pytree_data_fields(), d.gather_pytree_aux_fields())
++    cold_data, cold_aux = d.tree_flatten()
++    covariance = d.covariance_matrix
++    assert "covariance_matrix" in d.__dict__
++    warm_fields = (d.gather_pytree_data_fields(), d.gather_pytree_aux_fields())
++    assert warm_fields == cold_fields
++    # Match the field membership in #2389, without imposing its unmerged order.
++    assert set(warm_fields[0]) == {
++        "loc",
++        "correlation",
++        "conditional_precision",
++        "adj_matrix",
++    }
++    assert set(warm_fields[1]) == {
++        "_validate_args",
++        "is_sparse",
++        "adj_matrix",
++        "_batch_shape",
++        "_event_shape",
++    }
++    warm_data, warm_aux = d.tree_flatten()
++    assert warm_aux == cold_aux
++    for cold, warm in zip(cold_data, warm_data):
++        if cold is None:
++            assert warm is None
++        else:
++            assert_allclose(cold, warm)
++    leaves, treedef = jax.tree_util.tree_flatten(d)
++    restored = jax.tree_util.tree_unflatten(treedef, leaves)
++    assert "covariance_matrix" not in restored.__dict__
++    assert_allclose(restored.covariance_matrix, covariance, rtol=_RTOL, atol=_ATOL)
++    assert_allclose(restored.variance, d.variance, rtol=_RTOL, atol=_ATOL)
++
++
++@pytest.mark.parametrize("is_sparse", [False, True])
++def test_car_expanded_variance(is_sparse):
++    d = _make_car(is_sparse)
++    expanded = d.expand((3,))
++    assert expanded.variance.shape == (3, 4)
++    assert_allclose(
++        expanded.variance, np.broadcast_to(d.variance, (3, 4)), rtol=_RTOL, atol=_ATOL
++    )
