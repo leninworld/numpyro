@@ -1,0 +1,95 @@
+[
+  {
+    "name": "inference-auto-heavy",
+    "env": {
+      "CI": "true",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs",
+      "--durations=20"
+    ],
+    "args": [
+      "test/infer",
+      "--ignore=test/infer/test_mcmc.py",
+      "--ignore=test/contrib/test_nested_sampling.py",
+      "-k",
+      "test_autosemidais or test_autosldais"
+    ],
+    "workers": 2,
+    "reference_seconds": 784.3,
+    "reference_basis": "partition-cost-v2.json; wall allocation estimate, actual ARM calibration admission required",
+    "argv": [
+      "pytest",
+      "-vs",
+      "--durations=20",
+      "test/infer",
+      "--ignore=test/infer/test_mcmc.py",
+      "--ignore=test/contrib/test_nested_sampling.py",
+      "-k",
+      "test_autosemidais or test_autosldais"
+    ]
+  },
+  {
+    "name": "inference-auto-other",
+    "env": {
+      "CI": "true",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs",
+      "--durations=20"
+    ],
+    "args": [
+      "test/infer",
+      "--ignore=test/infer/test_mcmc.py",
+      "--ignore=test/contrib/test_nested_sampling.py",
+      "-k",
+      "test_autoguide and not (test_autosemidais or test_autosldais)"
+    ],
+    "workers": 2,
+    "reference_seconds": 418.55,
+    "reference_basis": "partition-cost-v2.json; wall allocation estimate, actual ARM calibration admission required",
+    "argv": [
+      "pytest",
+      "-vs",
+      "--durations=20",
+      "test/infer",
+      "--ignore=test/infer/test_mcmc.py",
+      "--ignore=test/contrib/test_nested_sampling.py",
+      "-k",
+      "test_autoguide and not (test_autosemidais or test_autosldais)"
+    ]
+  },
+  {
+    "name": "inference-other-rest",
+    "env": {
+      "CI": "true",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs",
+      "--durations=20"
+    ],
+    "args": [
+      "test/infer",
+      "--ignore=test/infer/test_mcmc.py",
+      "--ignore=test/contrib/test_nested_sampling.py",
+      "-k",
+      "not test_autoguide and not (test_autosemidais or test_autosldais)"
+    ],
+    "workers": 2,
+    "reference_seconds": 974.4,
+    "reference_basis": "partition-cost-v2.json; wall allocation estimate, actual ARM calibration admission required",
+    "argv": [
+      "pytest",
+      "-vs",
+      "--durations=20",
+      "test/infer",
+      "--ignore=test/infer/test_mcmc.py",
+      "--ignore=test/contrib/test_nested_sampling.py",
+      "-k",
+      "not test_autoguide and not (test_autosemidais or test_autosldais)"
+    ]
+  }
+]

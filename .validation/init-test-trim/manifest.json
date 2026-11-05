@@ -1,0 +1,92 @@
+{
+  "image": "python@sha256:6b8555b2ad1d98bac702ce5bf226c41566408d87efde45b19cbdef9f36fcc998",
+  "image_config": "sha256:9c4998120c916e3438dd11651703063becb98ad417225babd24ab6663e9358b2",
+  "python": "3.12.16",
+  "arch": "aarch64",
+  "apt_hosts": [
+    "deb.debian.org",
+    "security.debian.org"
+  ],
+  "hook_hosts": [
+    "github.com",
+    "objects.githubusercontent.com",
+    "release-assets.githubusercontent.com",
+    "pypi.org",
+    "files.pythonhosted.org",
+    "proxy.golang.org",
+    "sum.golang.org",
+    "dl.google.com",
+    "go.dev"
+  ],
+  "hook_revisions": {
+    "https://github.com/astral-sh/ty-pre-commit": "v0.0.75",
+    "https://github.com/pre-commit/pre-commit-hooks": "v6.0.0",
+    "https://github.com/codespell-project/codespell": "v2.4.2",
+    "https://github.com/google/yamlfmt": "v0.21.0",
+    "https://github.com/tombi-toml/tombi-pre-commit": "v0.11.5"
+  },
+  "backend_metadata_hashes": {
+    "setuptools": "062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922",
+    "wheel": "708e7481cc80179af0e556bbf0cc00b8444c7321e2700b8d8580231d13017248"
+  },
+  "build_backend_contract": {
+    "funsor": "Exact d9ceb0d3 pyproject read via official GitHub: setuptools>=77; pinned80.9.0 satisfies. Isolated source backend versions pinned by build-constraints; verbose logs retained, no claim VCS --require-hashes enforcement.",
+    "numpyro": "Actual c4 pyproject requires setuptools>=61 and wheel; overlay80.9.0/0.45.1 satisfies, editable/build --no-build-isolation."
+  },
+  "serial_diagnostic_max": 5,
+  "billing": {
+    "repository": "leninworld/numpyro",
+    "visibility": "public",
+    "verified": true,
+    "runner": "ubuntu-24.04-arm",
+    "billing_basis": "standard public GitHub-hosted ARM runners free; https://docs.github.com/en/actions/reference/runners/github-hosted-runners",
+    "aggregate_jobs": "final exact number must come from executable matrix; not 4GiB aggregate"
+  },
+  "host_min_available_gib": 13,
+  "host_min_total_gib": 14,
+  "host_min_disk_gib": 10,
+  "disk_free_floor_gib": 3,
+  "published": "0407e2d315868b7b0ffc78ba66e7b8786f3fdd37",
+  "source_url": "https://github.com/leninworld/numpyro.git",
+  "util_sha256": "68a593b0ae161c200f0503f7cc1afb79eaed160ed3eb3bfa25225f0c502f86d7",
+  "baseline_util_sha256": "68a593b0ae161c200f0503f7cc1afb79eaed160ed3eb3bfa25225f0c502f86d7",
+  "source_blobs": {
+    "numpyro/infer/util.py": "b080fe6ab0240a64ddf2b73f0f2c721601ea521a",
+    "test/infer/test_infer_util.py": "a7dd036e48d85a56fef363e676ecb9c791dd2c60",
+    "test/infer/test_autoguide.py": "0fab29bf0348363112ad7266587691b3575bf8b5"
+  },
+  "changed_paths": [
+    "test/infer/test_infer_util.py"
+  ],
+  "repair_names": [
+    "test_per_site_init_strategy",
+    "test_init_strategy_zero_argument_factory",
+    "test_init_strategy_factory_must_return_callable",
+    "test_init_strategy_body_type_error",
+    "test_autoguide_per_site_init_strategy"
+  ],
+  "science_names": [
+    "inference-auto-heavy",
+    "inference-auto-other",
+    "inference-other-rest"
+  ],
+  "deadline_seconds": 3600,
+  "target_seconds": 3000,
+  "predicted_bundle_seconds": {
+    "inference-auto-heavy": 354,
+    "inference-auto-other": 455,
+    "inference-other-rest": 843,
+    "quality": 900
+  },
+  "queue_reserve_seconds": 300,
+  "artifact_reserve_seconds": 180,
+  "job_count": 5,
+  "aggregate_network_estimate_gib": 20,
+  "network_status": "Estimate based on5isolatedjobs4GiBeach; notmeasuredwire",
+  "logical_attempt": 1,
+  "maximum_logical_attempts": 2,
+  "second_attempt": "NOTautomaticallyauthorized; needsactualfailure/evidence/substantiveClaudeapproval, sameoriginalclock/counters",
+  "prior_science_reuse": "Production/allpackageinputs unchanged from0407; full23commands previouslypassed, fresh3inferencebundles+quality+8source/8wheel now.",
+  "patch_sha256": "84f709c07fb83d83d30e532a175078b94ea22cf1dd27b11219c3179b318dc51e",
+  "review": 5791938822
+}
