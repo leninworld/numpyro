@@ -1,0 +1,145 @@
+name: Initialization lazy-annotation repair validation
+on:
+  push:
+    branches: [validate-init-lazy-annotations-2384-i2]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  d0:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    outputs:
+      origin: ${{ steps.origin.outputs.origin }}
+      attempt_start: ${{ steps.origin.outputs.attempt_start }}
+      prices: ${{ steps.prices.outputs.prices }}
+    env:
+      JOB_LABEL: d0
+    steps:
+      - name: Record one whole-workflow origin
+        id: origin
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          gh --version
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" --jq .run_started_at > "$RUNNER_TEMP/run-origin.txt"
+          python3 - <<'PYORIGIN' >> "$GITHUB_OUTPUT"
+          import datetime,os,pathlib
+          text=(pathlib.Path(os.environ['RUNNER_TEMP'])/'run-origin.txt').read_text().strip()
+          print('origin='+str(int(datetime.datetime.fromisoformat(text.replace('Z','+00:00')).timestamp())))
+          print('attempt_start='+str(int(datetime.datetime.fromisoformat(text.replace('Z','+00:00')).timestamp())))
+          PYORIGIN
+      - name: Fetch exact public diagnostic packet
+        run: |
+          set -eu
+          mkdir "$RUNNER_TEMP/numpyro2384-pep649-packet"
+          git -C "$RUNNER_TEMP/numpyro2384-pep649-packet" init --quiet
+          timeout 60 git -C "$RUNNER_TEMP/numpyro2384-pep649-packet" fetch --depth=1 "https://github.com/$GITHUB_REPOSITORY.git" "$GITHUB_SHA"
+          git -C "$RUNNER_TEMP/numpyro2384-pep649-packet" checkout --detach --quiet FETCH_HEAD
+          cd "$RUNNER_TEMP/numpyro2384-pep649-packet"
+          sha256sum --check .validation/numpyro2384-pep649-full/SHA256SUMS
+          cmp .github/workflows/validate-init-lazy-annotations-2384-i2.yml .validation/numpyro2384-pep649-full/workflow.yml
+      - name: Whole-scope prerequisite and admission
+        env:
+          PACKET_ORIGIN: ${{ steps.origin.outputs.origin }}
+          PACKET_ATTEMPT_START: ${{ steps.origin.outputs.attempt_start }}
+        run: python3 "$RUNNER_TEMP/numpyro2384-pep649-packet/.validation/numpyro2384-pep649-full/host.py" d0
+      - name: Export admitted full-group prices
+        id: prices
+        run: |
+          python3 - <<'PYPRICE' >> "$GITHUB_OUTPUT"
+          import json,os,pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'numpyro2384-pep649-full-d0/evidence/full-gate.json'
+          d=json.loads(p.read_text()); assert d['admitted']
+          print('prices='+json.dumps(d['predicted_bundle_seconds'],separators=(',',':')))
+          PYPRICE
+      - name: Retain all prerequisite evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: numpyro2384-pep649-full-d0
+          path: ${{ runner.temp }}/numpyro2384-pep649-full-d0/evidence
+          if-no-files-found: error
+          retention-days: 14
+  full:
+    needs: d0
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 17
+      matrix:
+        include:
+          - label: model-distribution-1
+            mode: model-distribution-1
+          - label: model-distribution-2
+            mode: model-distribution-2
+          - label: model-distribution-3
+            mode: model-distribution-3
+          - label: model-distribution-4
+            mode: model-distribution-4
+          - label: model-distribution-5
+            mode: model-distribution-5
+          - label: model-other
+            mode: model-other
+          - label: inference-contrib
+            mode: inference-contrib
+          - label: inference-auto-heavy
+            mode: inference-auto-heavy
+          - label: inference-auto-other
+            mode: inference-auto-other
+          - label: inference-other-rest
+            mode: inference-other-rest
+          - label: mcmc
+            mode: mcmc
+          - label: examples
+            mode: examples
+          - label: variants-x64-tracer
+            mode: model-x64,tracer-mcmc,tracer-gompertz,mcmc-x64
+          - label: variants-chains-a
+            mode: chains-dcc,chains-tfp,chains-gibbs
+          - label: variants-chains-b
+            mode: chains-mcmc,chains-compile
+          - label: variants-custom-nested
+            mode: mcmc-custom-prng,nested-x64
+          - label: quality
+            mode: quality
+          - label: lower-auto-heavy
+            mode: inference-auto-heavy
+          - label: lower-auto-other
+            mode: inference-auto-other
+          - label: lower-other-rest
+            mode: inference-other-rest
+          - label: lower-mcmc
+            mode: mcmc
+          - label: lower-quality
+            mode: quality
+    env:
+      JOB_LABEL: ${{ matrix.label }}
+      VALIDATION_PRICE_JSON: ${{ needs.d0.outputs.prices }}
+      PACKET_ORIGIN: ${{ needs.d0.outputs.origin }}
+      PACKET_ATTEMPT_START: ${{ needs.d0.outputs.attempt_start }}
+    steps:
+      - name: Fetch identical packet
+        run: |
+          set -eu
+          mkdir "$RUNNER_TEMP/numpyro2384-pep649-packet"
+          git -C "$RUNNER_TEMP/numpyro2384-pep649-packet" init --quiet
+          timeout 60 git -C "$RUNNER_TEMP/numpyro2384-pep649-packet" fetch --depth=1 "https://github.com/$GITHUB_REPOSITORY.git" "$GITHUB_SHA"
+          git -C "$RUNNER_TEMP/numpyro2384-pep649-packet" checkout --detach --quiet FETCH_HEAD
+          cd "$RUNNER_TEMP/numpyro2384-pep649-packet"
+          sha256sum --check .validation/numpyro2384-pep649-full/SHA256SUMS
+          cmp .github/workflows/validate-init-lazy-annotations-2384-i2.yml .validation/numpyro2384-pep649-full/workflow.yml
+      - name: Complete required validation group
+        env:
+          VALIDATION_MODE: ${{ matrix.mode }}
+        run: python3 "$RUNNER_TEMP/numpyro2384-pep649-packet/.validation/numpyro2384-pep649-full/host.py" "$VALIDATION_MODE"
+      - name: Retain all group evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: numpyro2384-pep649-full-${{ matrix.label }}
+          path: ${{ runner.temp }}/numpyro2384-pep649-full-${{ matrix.label }}/evidence
+          if-no-files-found: error
+          retention-days: 14
