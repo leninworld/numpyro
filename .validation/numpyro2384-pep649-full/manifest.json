@@ -1,0 +1,167 @@
+{
+  "image": "python@sha256:6b8555b2ad1d98bac702ce5bf226c41566408d87efde45b19cbdef9f36fcc998",
+  "image_config": "sha256:9c4998120c916e3438dd11651703063becb98ad417225babd24ab6663e9358b2",
+  "python": "3.12.16",
+  "arch": "aarch64",
+  "source_url": "https://github.com/leninworld/numpyro.git",
+  "apt_hosts": [
+    "deb.debian.org",
+    "security.debian.org"
+  ],
+  "hook_hosts": [
+    "github.com",
+    "objects.githubusercontent.com",
+    "release-assets.githubusercontent.com",
+    "pypi.org",
+    "files.pythonhosted.org",
+    "proxy.golang.org",
+    "sum.golang.org",
+    "dl.google.com",
+    "go.dev"
+  ],
+  "hook_revisions": {
+    "https://github.com/astral-sh/ty-pre-commit": "v0.0.75",
+    "https://github.com/pre-commit/pre-commit-hooks": "v6.0.0",
+    "https://github.com/codespell-project/codespell": "v2.4.2",
+    "https://github.com/google/yamlfmt": "v0.21.0",
+    "https://github.com/tombi-toml/tombi-pre-commit": "v0.11.5"
+  },
+  "backend_metadata_hashes": {
+    "setuptools": "062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922",
+    "wheel": "708e7481cc80179af0e556bbf0cc00b8444c7321e2700b8d8580231d13017248"
+  },
+  "build_backend_contract": {
+    "funsor": "Exact d9ceb0d3 pyproject read via official GitHub: setuptools>=77; pinned80.9.0 satisfies. Isolated source backend versions pinned by build-constraints; verbose logs retained, no claim VCS --require-hashes enforcement.",
+    "numpyro": "Actual c4 pyproject requires setuptools>=61 and wheel; overlay80.9.0/0.45.1 satisfies, editable/build --no-build-isolation."
+  },
+  "serial_diagnostic_max": 5,
+  "billing": {
+    "repository": "leninworld/numpyro",
+    "visibility": "public",
+    "verified": true,
+    "runner": "ubuntu-24.04-arm",
+    "billing_basis": "standard public GitHub-hosted ARM runners free; https://docs.github.com/en/actions/reference/runners/github-hosted-runners",
+    "aggregate_jobs": "final exact number must come from executable matrix; not 4GiB aggregate"
+  },
+  "xdist_failure_policy": "Each primary failure stands. One predeclared serial diagnostic of exactly each failing node in same job only if time remains; both saved. A serial pass labels order-dependent under xdist, never converts failure to pass. No retry of whole command.",
+  "families": {
+    "model": [
+      "model-distribution-1",
+      "model-distribution-2",
+      "model-distribution-3",
+      "model-distribution-4",
+      "model-distribution-5",
+      "model-other"
+    ],
+    "inference": [
+      "inference-auto-heavy",
+      "inference-auto-other",
+      "inference-other-rest"
+    ]
+  },
+  "coverage_omitted": "PYTEST_ADDOPTS explicitly empty. Coverage and Coveralls omitted: no threshold/pass-fail gate upstream. Report omission; scientific selections unchanged.",
+  "deadline_seconds": 3600,
+  "target_seconds": 3000,
+  "memory_gib": 13,
+  "cpus": 3,
+  "host_min_available_gib": 13,
+  "host_min_total_gib": 14,
+  "host_min_disk_gib": 10,
+  "disk_free_floor_gib": 3,
+  "artifact_reserve_seconds": 180,
+  "queue_reserve_seconds": 450,
+  "observed_calibration_seconds": 36.217,
+  "observed_bundle_job_seconds": {
+    "examples": 1142.444552898407,
+    "inference-auto-heavy": 186.70297074317932,
+    "inference-auto-other": 267.6069664955139,
+    "inference-contrib": 625.911682844162,
+    "inference-other-rest": 578.2029187679291,
+    "mcmc": 323.6657109260559,
+    "model-distribution-1": 765.9590544700623,
+    "model-distribution-2": 497.7403471469879,
+    "model-distribution-3": 604.0253539085388,
+    "model-distribution-4": 650.7957699298859,
+    "model-distribution-5": 462.11215376853943,
+    "model-other": 465.04452562332153,
+    "variants-chains-a": 199.28626346588135,
+    "variants-chains-b": 138.93922901153564,
+    "variants-custom-nested": 547.2457084655762,
+    "variants-x64-tracer": 289.5455641746521
+  },
+  "closure_sha256": {
+    "12": "11b2c6696ae740d79a0ecfc335710080f0b3f1e477294940915b80934ae5a0d3",
+    "14": "6cd2a99e632b83bbb4ee539fb8dcd6c1d5834719f1d4e55b61de3a3f8c8ec0a0"
+  },
+  "funsor_snapshot": "d9ceb0d3c6add16950138f781f2e5a7ee3df521f",
+  "job_count": 23,
+  "matrix_max_parallel": 17,
+  "per_job_network_estimate_gib": 5,
+  "aggregate_network_estimate_gib": 115,
+  "network_status": "Twofrozenclosures:criticalwheelsverifiedpublicmetadata; exactFunsorpinnedsource; networkduringbuild/install/publicexampledata only; no provideraccounts.",
+  "base": "4fc1aa404da930f8fb8ee7f2effc01637e08d6fb",
+  "source_blobs": {
+    "numpyro/infer/util.py": "6b0417b3ab6f8b0420654c274a814722aba4c4cc",
+    "test/infer/test_infer_util.py": "7c325602b0f83eed11f4d489473f462af75d0b66",
+    "docs/source/utilities.rst": "07751cee1cc231dcfa1e4f5e3b01930d958b85d6"
+  },
+  "quality_projection_seconds": 1200,
+  "D0_minimum_total_remaining_seconds": 3010,
+  "execution_enabled": true,
+  "publication_enabled": true,
+  "logical_attempt": 15,
+  "maximum_logical_attempts": 25,
+  "execution_policy": "PROPOSED next overall15of25;14consumed unchanged. Exact fullstageClaudeapproval+independentrootagreement/freshquota/publication/resourcegates required.50/60minutesnoautomaticretry; Bambi717 campaign must actuallyfinish before launch under serialdefault.",
+  "full_science_scope": "3.14all23commandsin16bundles; lower3.12complete3inferbundles+MCMC+quality;bothinstalledwheelconsumer. Newpair2factoryexpectedbaselinefail2candidatepass and14source/wheelcases.",
+  "historical_calibration_note": "Actual42003958097 job+artifactIDs and16host-terminalreceiptsverifythesepriorwalltimes; qualityformatfailed. Calibrationonly, notcurrenta83/1249result. 11.33GiBworking-set sample notcontinuouspeak. Freshhostadmissionmandatory.",
+  "quality_note": "Freshfull lint/headers/ty/allhooks/docs/doctest/README/sdist+wheel;14source/wheel cases on3.14,12pass2skip on3.12;2unskippedNUTS each.",
+  "ci_sha256": "dca12edf0b80030b1e64975dfbf1737de34799a0d62db8a692fe943fa67e8517",
+  "quality_pricing": "Retainedhooks21.866/docs61.133/doctest170.459/README7.692/build1.668/installedsync0.517/sourcestart53.9,correctedfulllint1.217. ~319sbaseplusinstalledliteralcap150andcoldmargin.1200sconservativeprojection retainsfullscope; notsumofpercommandtimeouts.",
+  "scope": "Review5888051951 full3itemrepair+minorbody/error; all23sciencecommands16bundles3.14 pluslower3.12 fullaffectedinference/MCMC/fullquality; no scope reduction.",
+  "repair_names": [
+    "test_per_site_init_strategy",
+    "test_init_strategy_zero_argument_factory",
+    "test_init_strategy_factory_must_return_callable",
+    "test_init_strategy_body_type_error",
+    "test_autoguide_per_site_init_strategy",
+    "test_init_strategy_unresolved_annotation",
+    "test_init_strategy_value_factory",
+    "test_init_strategy_plate_and_observed_sites"
+  ],
+  "published": "4fc1aa404da930f8fb8ee7f2effc01637e08d6fb",
+  "changed_paths": [
+    "numpyro/infer/util.py",
+    "test/infer/test_infer_util.py",
+    "docs/source/utilities.rst"
+  ],
+  "util_sha256": "37246c12c764c84432f24afbbfe9373ff357fedfc0f8e9f0c077cbbdf51a2802",
+  "baseline_util_sha256": "4c777cd378e3f1233b7a0833353160a1b1d256d54a49e57a9e5ecf759c22724c",
+  "lanes": {
+    "14": {
+      "python": "3.14.10",
+      "image": "python@sha256:85721b39ede6757d798fcf9b560418986bc0f8db774ca3469cc655a0c46db349"
+    },
+    "12": {
+      "python": "3.12.16",
+      "image": "python@sha256:6b8555b2ad1d98bac702ce5bf226c41566408d87efde45b19cbdef9f36fcc998"
+    }
+  },
+  "lower_labels": [
+    "lower-auto-heavy",
+    "lower-auto-other",
+    "lower-other-rest",
+    "lower-mcmc",
+    "lower-quality"
+  ],
+  "lower_projection_seconds": 1500,
+  "calibration_expected_cases": 3,
+  "observed_calibration_nodeid": "test/test_distributions.py::test_mean_var[GaussianCopulaBeta-None-params57]",
+  "reviewFeedback": 5888051951,
+  "cumulativeValidationAttemptsConsumed": 14,
+  "validationAttemptProposed": 15,
+  "concurrencyPrerequisite": {
+    "campaigns": "Serial with Bambi717; no launch merely because its earlier package was published. Root finalobserved terminal after15:48:29Z + results/stoppedprocess proof first, plus nootheractiveownedDocker campaign.",
+    "withinCampaign": "Reuse prior exact17maxparallel hostedVM layout only after fresh actual aggregate queue/capacity/resource admission and exactClaudeapproval;13GiB/3CPUeach, max221GiB51CPU acrossindependentVMs, noMacDocker load. PerVM14GiBtotal13available/disk10; admissionfailsclosed and no partialscope substitute.",
+    "queuedTime": "One actualrun-start globalclock, noreset forlatermatrixjobs. D0 calibration/price gating retains450queue180artifactreserve, eachhostedjobfreshresources; any incomplete lane remainsfailure."
+  }
+}

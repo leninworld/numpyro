@@ -1,0 +1,606 @@
+[
+  {
+    "name": "model-distribution-1",
+    "env": {
+      "CI": "1",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs",
+      "--durations=100"
+    ],
+    "args": [
+      "test/test_distributions.py",
+      "-k",
+      "not test_example and (test_expand or test_log_prob_gradient)"
+    ],
+    "workers": 2,
+    "reference_seconds": 1047.17,
+    "reference_basis": "partition-cost-v2.json; wall allocation estimate, actual ARM calibration admission required",
+    "argv": [
+      "pytest",
+      "-vs",
+      "--durations=100",
+      "test/test_distributions.py",
+      "-k",
+      "not test_example and (test_expand or test_log_prob_gradient)"
+    ]
+  },
+  {
+    "name": "model-distribution-2",
+    "env": {
+      "CI": "1",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs",
+      "--durations=100"
+    ],
+    "args": [
+      "test/test_distributions.py",
+      "-k",
+      "not test_example and not (test_expand or test_log_prob_gradient) and (test_dist_shape or test_mean_var or test_distribution_constraints)"
+    ],
+    "workers": 2,
+    "reference_seconds": 815.82,
+    "reference_basis": "partition-cost-v2.json; wall allocation estimate, actual ARM calibration admission required",
+    "argv": [
+      "pytest",
+      "-vs",
+      "--durations=100",
+      "test/test_distributions.py",
+      "-k",
+      "not test_example and not (test_expand or test_log_prob_gradient) and (test_dist_shape or test_mean_var or test_distribution_constraints)"
+    ]
+  },
+  {
+    "name": "model-distribution-3",
+    "env": {
+      "CI": "1",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs",
+      "--durations=100"
+    ],
+    "args": [
+      "test/test_distributions.py",
+      "-k",
+      "not test_example and not (test_expand or test_log_prob_gradient) and not (test_dist_shape or test_mean_var or test_distribution_constraints) and (test_output_is_array or test_vmap_dist or test_dist_pytree)"
+    ],
+    "workers": 2,
+    "reference_seconds": 1001.24,
+    "reference_basis": "partition-cost-v2.json; wall allocation estimate, actual ARM calibration admission required",
+    "argv": [
+      "pytest",
+      "-vs",
+      "--durations=100",
+      "test/test_distributions.py",
+      "-k",
+      "not test_example and not (test_expand or test_log_prob_gradient) and not (test_dist_shape or test_mean_var or test_distribution_constraints) and (test_output_is_array or test_vmap_dist or test_dist_pytree)"
+    ]
+  },
+  {
+    "name": "model-distribution-4",
+    "env": {
+      "CI": "1",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs",
+      "--durations=100"
+    ],
+    "args": [
+      "test/test_distributions.py",
+      "-k",
+      "not test_example and not (test_expand or test_log_prob_gradient) and not (test_dist_shape or test_mean_var or test_distribution_constraints) and not (test_output_is_array or test_vmap_dist or test_dist_pytree) and (test_log_prob or test_cdf_and_icdf or test_jit_log_likelihood or test_sample_gradient)"
+    ],
+    "workers": 2,
+    "reference_seconds": 750.51,
+    "reference_basis": "partition-cost-v2.json; wall allocation estimate, actual ARM calibration admission required",
+    "argv": [
+      "pytest",
+      "-vs",
+      "--durations=100",
+      "test/test_distributions.py",
+      "-k",
+      "not test_example and not (test_expand or test_log_prob_gradient) and not (test_dist_shape or test_mean_var or test_distribution_constraints) and not (test_output_is_array or test_vmap_dist or test_dist_pytree) and (test_log_prob or test_cdf_and_icdf or test_jit_log_likelihood or test_sample_gradient)"
+    ]
+  },
+  {
+    "name": "model-distribution-5",
+    "env": {
+      "CI": "1",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs",
+      "--durations=100"
+    ],
+    "args": [
+      "test/test_distributions.py",
+      "-k",
+      "not test_example and not (test_expand or test_log_prob_gradient) and not (test_dist_shape or test_mean_var or test_distribution_constraints) and not (test_output_is_array or test_vmap_dist or test_dist_pytree) and not (test_log_prob or test_cdf_and_icdf or test_jit_log_likelihood or test_sample_gradient)"
+    ],
+    "workers": 2,
+    "reference_seconds": 765.53,
+    "reference_basis": "partition-cost-v2.json; wall allocation estimate, actual ARM calibration admission required",
+    "argv": [
+      "pytest",
+      "-vs",
+      "--durations=100",
+      "test/test_distributions.py",
+      "-k",
+      "not test_example and not (test_expand or test_log_prob_gradient) and not (test_dist_shape or test_mean_var or test_distribution_constraints) and not (test_output_is_array or test_vmap_dist or test_dist_pytree) and not (test_log_prob or test_cdf_and_icdf or test_jit_log_likelihood or test_sample_gradient)"
+    ]
+  },
+  {
+    "name": "model-other",
+    "env": {
+      "CI": "1",
+      "PYTEST_ADDOPTS": ""
+    },
+    "args": [
+      "-k",
+      "not test_example",
+      "--ignore=test/infer/",
+      "--ignore=test/contrib/",
+      "--ignore=test/test_distributions.py"
+    ],
+    "pytest_prefix": [
+      "-vs",
+      "--durations=100"
+    ],
+    "argv": [
+      "pytest",
+      "-vs",
+      "--durations=100",
+      "-k",
+      "not test_example",
+      "--ignore=test/infer/",
+      "--ignore=test/contrib/",
+      "--ignore=test/test_distributions.py"
+    ],
+    "reference_seconds": 857.05,
+    "workers": 2,
+    "reference_basis": "partition-cost-v2.json; wall allocation estimate, actual ARM calibration admission required"
+  },
+  {
+    "name": "inference-contrib",
+    "env": {
+      "CI": "true",
+      "PYTEST_ADDOPTS": ""
+    },
+    "args": [
+      "test/contrib",
+      "--ignore=test/contrib/stochastic_support/test_dcc.py"
+    ],
+    "pytest_prefix": [
+      "-vs",
+      "--durations=20"
+    ],
+    "argv": [
+      "pytest",
+      "-vs",
+      "--durations=20",
+      "test/contrib",
+      "--ignore=test/contrib/stochastic_support/test_dcc.py"
+    ],
+    "reference_seconds": 966.53,
+    "workers": 2
+  },
+  {
+    "name": "inference-auto-heavy",
+    "env": {
+      "CI": "true",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs",
+      "--durations=20"
+    ],
+    "args": [
+      "test/infer",
+      "--ignore=test/infer/test_mcmc.py",
+      "--ignore=test/contrib/test_nested_sampling.py",
+      "-k",
+      "test_autosemidais or test_autosldais"
+    ],
+    "workers": 2,
+    "reference_seconds": 784.3,
+    "reference_basis": "partition-cost-v2.json; wall allocation estimate, actual ARM calibration admission required",
+    "argv": [
+      "pytest",
+      "-vs",
+      "--durations=20",
+      "test/infer",
+      "--ignore=test/infer/test_mcmc.py",
+      "--ignore=test/contrib/test_nested_sampling.py",
+      "-k",
+      "test_autosemidais or test_autosldais"
+    ]
+  },
+  {
+    "name": "inference-auto-other",
+    "env": {
+      "CI": "true",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs",
+      "--durations=20"
+    ],
+    "args": [
+      "test/infer",
+      "--ignore=test/infer/test_mcmc.py",
+      "--ignore=test/contrib/test_nested_sampling.py",
+      "-k",
+      "test_autoguide and not (test_autosemidais or test_autosldais)"
+    ],
+    "workers": 2,
+    "reference_seconds": 418.55,
+    "reference_basis": "partition-cost-v2.json; wall allocation estimate, actual ARM calibration admission required",
+    "argv": [
+      "pytest",
+      "-vs",
+      "--durations=20",
+      "test/infer",
+      "--ignore=test/infer/test_mcmc.py",
+      "--ignore=test/contrib/test_nested_sampling.py",
+      "-k",
+      "test_autoguide and not (test_autosemidais or test_autosldais)"
+    ]
+  },
+  {
+    "name": "inference-other-rest",
+    "env": {
+      "CI": "true",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs",
+      "--durations=20"
+    ],
+    "args": [
+      "test/infer",
+      "--ignore=test/infer/test_mcmc.py",
+      "--ignore=test/contrib/test_nested_sampling.py",
+      "-k",
+      "not test_autoguide and not (test_autosemidais or test_autosldais)"
+    ],
+    "workers": 2,
+    "reference_seconds": 974.4,
+    "reference_basis": "partition-cost-v2.json; wall allocation estimate, actual ARM calibration admission required",
+    "argv": [
+      "pytest",
+      "-vs",
+      "--durations=20",
+      "test/infer",
+      "--ignore=test/infer/test_mcmc.py",
+      "--ignore=test/contrib/test_nested_sampling.py",
+      "-k",
+      "not test_autoguide and not (test_autosemidais or test_autosldais)"
+    ]
+  },
+  {
+    "name": "mcmc",
+    "env": {
+      "CI": "true",
+      "PYTEST_ADDOPTS": ""
+    },
+    "args": [
+      "test/infer/test_mcmc.py"
+    ],
+    "pytest_prefix": [
+      "-vs",
+      "--durations=20"
+    ],
+    "argv": [
+      "pytest",
+      "-vs",
+      "--durations=20",
+      "test/infer/test_mcmc.py"
+    ],
+    "reference_seconds": 446.76,
+    "workers": 2
+  },
+  {
+    "name": "examples",
+    "env": {
+      "CI": "1",
+      "XLA_FLAGS": "--xla_force_host_platform_device_count=2",
+      "PYTEST_ADDOPTS": ""
+    },
+    "args": [
+      "-k",
+      "test_example"
+    ],
+    "pytest_prefix": [
+      "-vs",
+      "--durations=20"
+    ],
+    "argv": [
+      "pytest",
+      "-vs",
+      "--durations=20",
+      "-k",
+      "test_example"
+    ],
+    "reference_seconds": 899,
+    "workers": 0
+  },
+  {
+    "name": "model-x64",
+    "env": {
+      "CI": "true",
+      "JAX_ENABLE_X64": "1",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs"
+    ],
+    "args": [
+      "test/test_distributions.py",
+      "-k",
+      "powerLaw or Dagum"
+    ],
+    "reference_seconds": 54,
+    "argv": [
+      "pytest",
+      "-vs",
+      "test/test_distributions.py",
+      "-k",
+      "powerLaw or Dagum"
+    ],
+    "workers": 0
+  },
+  {
+    "name": "tracer-mcmc",
+    "env": {
+      "CI": "true",
+      "JAX_CHECK_TRACER_LEAKS": "1",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs"
+    ],
+    "args": [
+      "test/infer/test_mcmc.py::test_chain_inside_jit",
+      "test/infer/test_mcmc.py::test_chain_jit_args_smoke",
+      "test/infer/test_mcmc.py::test_model_with_multiple_exec_paths",
+      "test/infer/test_mcmc.py::test_reuse_mcmc_run"
+    ],
+    "reference_seconds": 67,
+    "argv": [
+      "pytest",
+      "-vs",
+      "test/infer/test_mcmc.py::test_chain_inside_jit",
+      "test/infer/test_mcmc.py::test_chain_jit_args_smoke",
+      "test/infer/test_mcmc.py::test_model_with_multiple_exec_paths",
+      "test/infer/test_mcmc.py::test_reuse_mcmc_run"
+    ],
+    "workers": 0,
+    "reference_status": "conservative entire upstream step upper bound, not per-command sourced timing"
+  },
+  {
+    "name": "tracer-gompertz",
+    "env": {
+      "CI": "true",
+      "JAX_CHECK_TRACER_LEAKS": "1",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs"
+    ],
+    "args": [
+      "test/test_distributions.py::test_mean_var",
+      "-k",
+      "Gompertz"
+    ],
+    "reference_seconds": 67,
+    "argv": [
+      "pytest",
+      "-vs",
+      "test/test_distributions.py::test_mean_var",
+      "-k",
+      "Gompertz"
+    ],
+    "workers": 0,
+    "reference_status": "conservative entire upstream step upper bound, not per-command sourced timing"
+  },
+  {
+    "name": "mcmc-x64",
+    "env": {
+      "CI": "true",
+      "JAX_ENABLE_X64": "1",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs"
+    ],
+    "args": [
+      "test/infer/test_mcmc.py",
+      "-k",
+      "x64"
+    ],
+    "reference_seconds": 139,
+    "argv": [
+      "pytest",
+      "-vs",
+      "test/infer/test_mcmc.py",
+      "-k",
+      "x64"
+    ],
+    "workers": 0
+  },
+  {
+    "name": "chains-dcc",
+    "env": {
+      "CI": "true",
+      "XLA_FLAGS": "--xla_force_host_platform_device_count=2",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs"
+    ],
+    "args": [
+      "test/contrib/stochastic_support/test_dcc.py"
+    ],
+    "reference_seconds": 89.33333333333333,
+    "argv": [
+      "pytest",
+      "-vs",
+      "test/contrib/stochastic_support/test_dcc.py"
+    ],
+    "workers": 0,
+    "reference_status": "Whole observed CI Test chains step268s is conservative bound for each bundle subset; allocated evenly within this bundle solely for additive gate accounting, not a measured per-command time."
+  },
+  {
+    "name": "chains-tfp",
+    "env": {
+      "CI": "true",
+      "XLA_FLAGS": "--xla_force_host_platform_device_count=2",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs"
+    ],
+    "args": [
+      "test/contrib/test_tfp.py",
+      "-k",
+      "chain"
+    ],
+    "reference_seconds": 89.33333333333333,
+    "argv": [
+      "pytest",
+      "-vs",
+      "test/contrib/test_tfp.py",
+      "-k",
+      "chain"
+    ],
+    "workers": 0,
+    "reference_status": "Whole observed CI Test chains step268s is conservative bound for each bundle subset; allocated evenly within this bundle solely for additive gate accounting, not a measured per-command time."
+  },
+  {
+    "name": "chains-gibbs",
+    "env": {
+      "CI": "true",
+      "XLA_FLAGS": "--xla_force_host_platform_device_count=2",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs"
+    ],
+    "args": [
+      "test/infer/test_hmc_gibbs.py",
+      "test/infer/test_gibbs.py",
+      "-k",
+      "chain"
+    ],
+    "reference_seconds": 89.33333333333333,
+    "argv": [
+      "pytest",
+      "-vs",
+      "test/infer/test_hmc_gibbs.py",
+      "test/infer/test_gibbs.py",
+      "-k",
+      "chain"
+    ],
+    "workers": 0,
+    "reference_status": "Whole observed CI Test chains step268s is conservative bound for each bundle subset; allocated evenly within this bundle solely for additive gate accounting, not a measured per-command time."
+  },
+  {
+    "name": "chains-mcmc",
+    "env": {
+      "CI": "true",
+      "XLA_FLAGS": "--xla_force_host_platform_device_count=2",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs"
+    ],
+    "args": [
+      "test/infer/test_mcmc.py",
+      "-k",
+      "chain or pmap or vmap"
+    ],
+    "reference_seconds": 134.0,
+    "argv": [
+      "pytest",
+      "-vs",
+      "test/infer/test_mcmc.py",
+      "-k",
+      "chain or pmap or vmap"
+    ],
+    "workers": 0,
+    "reference_status": "Whole observed CI Test chains step268s is conservative bound for each bundle subset; allocated evenly within this bundle solely for additive gate accounting, not a measured per-command time."
+  },
+  {
+    "name": "chains-compile",
+    "env": {
+      "CI": "true",
+      "XLA_FLAGS": "--xla_force_host_platform_device_count=2",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs"
+    ],
+    "args": [
+      "test/test_compile.py",
+      "-k",
+      "chain"
+    ],
+    "reference_seconds": 134.0,
+    "argv": [
+      "pytest",
+      "-vs",
+      "test/test_compile.py",
+      "-k",
+      "chain"
+    ],
+    "workers": 0,
+    "reference_status": "Whole observed CI Test chains step268s is conservative bound for each bundle subset; allocated evenly within this bundle solely for additive gate accounting, not a measured per-command time."
+  },
+  {
+    "name": "mcmc-custom-prng",
+    "env": {
+      "CI": "true",
+      "JAX_ENABLE_CUSTOM_PRNG": "1",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs"
+    ],
+    "args": [
+      "test/infer/test_mcmc.py"
+    ],
+    "reference_seconds": 448,
+    "argv": [
+      "pytest",
+      "-vs",
+      "test/infer/test_mcmc.py"
+    ],
+    "workers": 0
+  },
+  {
+    "name": "nested-x64",
+    "env": {
+      "CI": "true",
+      "JAX_ENABLE_X64": "1",
+      "PYTEST_ADDOPTS": ""
+    },
+    "pytest_prefix": [
+      "-vs"
+    ],
+    "args": [
+      "test/contrib/test_nested_sampling.py"
+    ],
+    "reference_seconds": 73,
+    "argv": [
+      "pytest",
+      "-vs",
+      "test/contrib/test_nested_sampling.py"
+    ],
+    "workers": 0
+  }
+]

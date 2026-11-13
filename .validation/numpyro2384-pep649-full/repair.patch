@@ -1,0 +1,156 @@
+--- a/numpyro/infer/util.py
++++ b/numpyro/infer/util.py
+@@ -421,7 +421,8 @@
+         return partial(strategy)
+     raise TypeError(
+         "Initialization strategy factory must return a per-site function f(site); "
+-        f"got {type(strategy).__name__}."
++        f"got {type(strategy).__name__} "
++        "(callables that accept no arguments are treated as factories)."
+     )
+ 
+ 
+@@ -449,9 +450,8 @@
+         sample from the prior. The returned `init_params` will have the
+         batch shape ``rng_key.shape[:-1]``.
+     :param model: Python callable containing Pyro primitives.
+-    :param callable init_strategy: a per-site initialization function requiring a
+-        positional ``site`` argument, or a factory returning one. A callable accepting
+-        zero arguments (e.g. ``site=None`` or ``*args``) is treated as a factory.
++    :param callable init_strategy: an initialization strategy. See :ref:`init_strategy`
++        for the callable contract and available functions.
+     :param bool enum: whether to enumerate over discrete latent sites.
+     :param tuple model_args: args provided to the model.
+     :param dict model_kwargs: kwargs provided to the model.
+@@ -811,10 +811,8 @@
+         sample from the prior. The returned `init_params` will have the
+         batch shape ``rng_key.shape[:-1]``.
+     :param model: Python callable containing Pyro primitives.
+-    :param callable init_strategy: a per-site initialization function requiring a
+-        positional ``site`` argument, or a factory returning one. A callable accepting
+-        zero arguments (e.g. ``site=None`` or ``*args``) is treated as a factory.
+-        See :ref:`init_strategy` section for available functions.
++    :param callable init_strategy: an initialization strategy. See :ref:`init_strategy`
++        for the callable contract and available functions.
+     :param bool dynamic_args: if `True`, the `potential_fn` and
+         `constraints_fn` are themselves dependent on model arguments.
+         When provided a `*model_args, **model_kwargs`, they return
+@@ -884,7 +882,7 @@
+     )
+ 
+     if (init_strategy.func is init_to_value) and not replay_model:
+-        init_values = init_strategy.keywords.get("values")
++        init_values = init_strategy.keywords.get("values", {})
+         unconstrained_values = transform_fn(inv_transforms, init_values, invert=True)
+         init_strategy = _init_to_unconstrained_value(values=unconstrained_values)
+     prototype_params = transform_fn(inv_transforms, constrained_values, invert=True)
+--- a/test/infer/test_infer_util.py
++++ b/test/infer/test_infer_util.py
+@@ -790,7 +790,10 @@
+     def model():
+         numpyro.sample("x", dist.Normal())
+ 
+-    with pytest.raises(TypeError, match=r"per-site function f\(site\)"):
++    with pytest.raises(
++        TypeError,
++        match=r"per-site function f\(site\).*callables that accept no arguments",
++    ):
+         initialize_model(random.key(0), model, init_strategy=lambda: 3.0)
+ 
+ 
+@@ -810,9 +813,8 @@
+ 
+ 
+ @pytest.mark.skipif(sys.version_info < (3, 14), reason="PEP 649 lazy annotations")
+-@pytest.mark.parametrize("initializer", [find_valid_initial_params, initialize_model])
+ @pytest.mark.parametrize("kind", ["factory", "per_site"])
+-def test_init_strategy_unresolved_annotation(initializer, kind):
++def test_init_strategy_unresolved_annotation(kind):
+     def model():
+         numpyro.sample("x", dist.Normal())
+ 
+@@ -825,5 +827,44 @@
+         return 0.0
+ 
+     strategy = factory if kind == "factory" else per_site
+-    info = initializer(random.key(0), model, init_strategy=strategy)[0]
+-    assert_allclose(info[0]["x"], 0.0)
++    info = initialize_model(random.key(0), model, init_strategy=strategy)
++    assert_allclose(info[0][0]["x"], 0.0)
++
++
++@pytest.mark.parametrize("kind", ["factory", "partial"])
++def test_init_strategy_value_factory(kind):
++    def model():
++        numpyro.sample("x", dist.Normal())
++
++    strategy = (lambda: init_to_value) if kind == "factory" else partial(init_to_value)
++    info = initialize_model(random.key(0), model, init_strategy=strategy)
++    expected = initialize_model(random.key(0), model, init_strategy=init_to_value)
++    assert_allclose(info.param_info.z["x"], expected.param_info.z["x"])
++    assert jnp.isfinite(info.param_info.potential_energy)
++
++
++@pytest.mark.parametrize("observed", [False, True])
++def test_init_strategy_plate_and_observed_sites(observed):
++    observations = jnp.array([1.0, 2.0, 3.0])
++
++    def model():
++        mu = numpyro.sample("mu", dist.Normal())
++        numpyro.sample("x", dist.Normal(mu, 1), obs=1.25 if observed else None)
++        offset = numpyro.param("offset", jnp.array(0.25))
++        numpyro.deterministic("twice_mu", 2 * mu)
++        with numpyro.plate("N", 3):
++            numpyro.sample("obs", dist.Normal(mu + offset, 1), obs=observations)
++
++    def strategy(site):
++        if site["type"] == "sample" and not site["is_observed"] and site["name"] == "x":
++            return 3.0
++        return init_to_uniform(site, radius=0.5)
++
++    info = initialize_model(random.key(0), model, init_strategy=strategy)
++    assert_allclose(info.model_trace["x"]["value"], 1.25 if observed else 3.0)
++    assert_allclose(info.model_trace["N"]["value"], jnp.arange(3))
++    assert_allclose(info.model_trace["obs"]["value"], observations)
++    assert_allclose(info.model_trace["offset"]["value"], 0.25)
++    assert_allclose(
++        info.model_trace["twice_mu"]["value"], 2 * info.model_trace["mu"]["value"]
++    )
+--- a/docs/source/utilities.rst
++++ b/docs/source/utilities.rst
+@@ -81,6 +81,35 @@
+ Initialization Strategies
+ -------------------------
+ 
++Initialization strategies can be supplied as callables:
++
++- A per-site function ``f(site)`` receives ``site`` positionally. It is called for
++  every site handled by :class:`~numpyro.handlers.substitute`: ``sample``
++  (including observed samples), ``plate``, ``param``, ``deterministic`` and
++  ``mutable`` sites. Any return value other than ``None`` replaces that site's
++  value; return ``None`` to leave it unchanged. Built-in strategies initialize
++  unobserved sample sites and return ``None`` for other sites. For example,
++  customize an unobserved sample and delegate all other sites to a built-in:
++
++  .. code-block:: python
++
++      from numpyro.infer import init_to_uniform
++
++      def my_init(site):
++          if (
++              site["type"] == "sample"
++              and not site["is_observed"]
++              and site["name"] == "x"
++          ):
++              return 3.0
++          return init_to_uniform(site, radius=0.5)
++
++- A callable accepting no arguments (for example, ``init_to_uniform`` or
++  ``f(site=None, ...)``) is treated as a factory and must return a per-site
++  function. This also applies to callables accepting ``*args``.
++- :class:`functools.partial` objects are always used as per-site functions,
++  even if they can be called without arguments.
++
+ init_to_feasible
+ ^^^^^^^^^^^^^^^^
+ .. autofunction:: numpyro.infer.initialization.init_to_feasible

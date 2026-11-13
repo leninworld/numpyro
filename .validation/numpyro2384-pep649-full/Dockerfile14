@@ -1,0 +1,14 @@
+FROM python@sha256:85721b39ede6757d798fcf9b560418986bc0f8db774ca3469cc655a0c46db349
+ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin
+RUN set -eu; test "$(. /etc/os-release; echo "$VERSION_CODENAME")" = bookworm; \
+    grep -RhE 'https?://' /etc/apt/sources.list /etc/apt/sources.list.d/ || true
+COPY apt_sources.py /opt/validation/apt_sources.py
+RUN python /opt/validation/apt_sources.py
+RUN set -eu; \
+    apt-get update; \
+    apt-cache policy pandoc graphviz gsfonts; \
+    apt-get install -y --no-install-recommends pandoc graphviz gsfonts git make; \
+    pandoc --version; dot -V; git --version; make --version; \
+    dpkg -L fonts-urw-base35 | grep -E '\.(otf|t1|pfb)$'; \
+    dpkg-query -W pandoc graphviz gsfonts fonts-urw-base35 git make
+WORKDIR /work
